@@ -150,6 +150,21 @@ public:
 		std::reverse(post_order.begin(), post_order.end());
 	}
 
+	void DepthFirstSearch(Node& n, std::map<int, std::set<int>>& found_edges)
+	{
+		n.setVisited(true);
+		//I start iterating through the found edges starting at the current index so that I don't go out of order
+		for (int i : found_edges[n.getID()])
+		{
+			if (!current_nodes[i].getVisited())
+			{
+				tree.push_back(current_nodes[i].getID());
+				DepthFirstSearch(current_nodes[i], found_edges);
+			}
+		}
+		post_order.push_back(n.getID());
+	}
+
 	void dumbDFSForest(std::unordered_map<int, std::set<int>> &found_edges)
 	{
 		forest.clear();
@@ -167,21 +182,6 @@ public:
 				tree.clear();
 			}
 		}
-	}
-
-	 void DepthFirstSearch(Node& n, std::map<int, std::set<int>> &found_edges)
-	{
-		n.setVisited(true);
-		//I start iterating through the found edges starting at the current index so that I don't go out of order
-		for ( int i : found_edges[n.getID()])
-		{
-				if (!current_nodes[i].getVisited())
-				{
-					tree.push_back(current_nodes[i].getID());
-					DepthFirstSearch(current_nodes[i], found_edges);
-				}
-		}
-		post_order.push_back(n.getID());
 	}
 	 void dumbDepthFirstSearch(Node& n, std::unordered_map<int, std::set<int>>& found_edges)
 	 {
