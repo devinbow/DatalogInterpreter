@@ -126,6 +126,10 @@ public:
 			{
 				run_single_check = true;
 			}
+			else
+			{
+				run_single_check = false;
+			}
 			while (fixed_point)
 			{
 				fixed_point = false;
