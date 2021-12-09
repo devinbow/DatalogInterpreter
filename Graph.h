@@ -7,15 +7,16 @@
 #define GRAPH_H
 class Graph {
 private:
-	std::map<int, std::set<int>> current_edges;
-	std::map<int, std::set<int>> reverse_edges;
-	std::unordered_map<int, std::set<int>> new_current_edges;
-	std::vector<int> post_order;
-	//std::vector<int> reverse_post_order;
-	//Make post_order vector of ints
+	std::map<unsigned int, std::set<unsigned int>> current_edges;
+	std::map<unsigned int, std::set<unsigned int>> reverse_edges;
+	std::unordered_map<unsigned int, std::set<unsigned int>> new_current_edges;
+	std::map<unsigned int, std::set<unsigned int>> real_new_current_edges;
+	std::vector<unsigned int> post_order;
+	//std::vector<unsigned int> reverse_post_order;
+	//Make post_order vector of unsigned ints
 	std::vector<Node> current_nodes;
-	std::vector<std::vector<int>> forest;
-	std::vector<int> tree;
+	std::vector<std::vector<unsigned int>> forest;
+	std::vector<unsigned int> tree;
 
 public:
 	void addNode(Node to_add)
@@ -47,9 +48,9 @@ public:
 
 	bool check_for_adjacency(Rule current_rule)
 	{
-		int current_graph_number = current_rule.getGraphNumber();
-		std::set<int> current_connected_edges = current_edges[current_graph_number];
-		for (int i : current_connected_edges)
+		unsigned int current_graph_number = current_rule.getGraphNumber();
+		std::set<unsigned int> current_connected_edges = current_edges[current_graph_number];
+		for (unsigned int i : current_connected_edges)
 		{
 			if (i == current_graph_number)
 			{
@@ -60,7 +61,7 @@ public:
 		return false;
 	}
 
-	std::vector<std::vector<int>> getSCC()
+	std::vector<std::vector<unsigned int>> getSCC()
 	{
 		return forest;
 	}
@@ -80,7 +81,7 @@ public:
 	{
 		for (long unsigned int i = 0; i < current_nodes.size(); i++)
 		{
-					std::set<int> connected_vertices;
+					std::set<unsigned int> connected_vertices;
 
 					for (Predicate p : current_nodes[i].getRule().getBodyPrecdicates())
 					{
@@ -92,15 +93,15 @@ public:
 							}
 						}
 					}
-			std::pair<int, std::set<int>> new_pair = { i, connected_vertices };
+			std::pair<unsigned int, std::set<unsigned int>> new_pair = { i, connected_vertices };
 			current_edges.insert(new_pair);
 		}
 		std::cout << "Dependency Graph" << std::endl;
-		for (std::pair<int, std::set<int>> i : current_edges)
+		for (std::pair<unsigned int, std::set<unsigned int>> i : current_edges)
 		{
 			std::cout << "R" << i.first << ":";
 			long unsigned int counter = 0;
-			for (int j : i.second)
+			for (unsigned int j : i.second)
 			{
 				std::cout << "R" << j;
 				if (counter+1 < i.second.size())
@@ -113,13 +114,13 @@ public:
 		}
 	}
 
-	void reverseEdgePopulate(std::map<int, std::set<int>>& reverse_edges)
+	void reverseEdgePopulate(std::map<unsigned int, std::set<unsigned int>>& reverse_edges)
 	{
-		std::set<int> connected_vertices;
+		std::set<unsigned int> connected_vertices;
 
-		for (std::map<int, std::set<int>>::iterator it = current_edges.begin() ; it != current_edges.end(); it++)
+		for (std::map<unsigned int, std::set<unsigned int>>::iterator it = current_edges.begin() ; it != current_edges.end(); it++)
 		{
-			std::pair<int, std::set<int>> new_pair = { it->first, connected_vertices };
+			std::pair<unsigned int, std::set<unsigned int>> new_pair = { it->first, connected_vertices };
 			reverse_edges.insert(new_pair);
 		}
 	}
@@ -127,12 +128,12 @@ public:
 	void reverseDependencyGraph()
 	{
 
-		std::map<int, std::set<int>> reverse_edges;
+		std::map<unsigned int, std::set<unsigned int>> reverse_edges;
 		reverseEdgePopulate(reverse_edges);
-		std::set<int> new_values;
-		for (std::pair<int, std::set<int>> p : current_edges)
+		std::set<unsigned int> new_values;
+		for (std::pair<unsigned int, std::set<unsigned int>> p : current_edges)
 		{
-			for (int i : p.second)
+			for (unsigned int i : p.second)
 			{
 				//I need to grab the actual value from the map
 				new_values = reverse_edges[i];
@@ -143,14 +144,14 @@ public:
 		this->reverse_edges = reverse_edges;
 	}
 
-	void dfsForest(std::map<int, std::set<int>> found_edges)
+	void dfsForest(std::map<unsigned int, std::set<unsigned int>> found_edges)
 	{
 		forest.clear();
-		for (std::pair<int, std::set<int>> p : found_edges)
+		for (std::pair<unsigned int, std::set<unsigned int>> p : found_edges)
 		{
 			current_nodes[p.first].setVisited(false);
 		}
-		for (std::pair<int, std::set<int>> p : found_edges)
+		for (std::pair<unsigned int, std::set<unsigned int>> p : found_edges)
 		{
 			if (!current_nodes[p.first].getVisited())
 			{
@@ -165,11 +166,11 @@ public:
 		std::reverse(post_order.begin(), post_order.end());
 	}
 
-	void DepthFirstSearch(Node& n, std::map<int, std::set<int>>& found_edges)
+	void DepthFirstSearch(Node& n, std::map<unsigned int, std::set<unsigned int>>& found_edges)
 	{
 		n.setVisited(true);
 		//I start iterating through the found edges starting at the current index so that I don't go out of order
-		for (int i : found_edges[n.getID()])
+		for (unsigned int i : found_edges[n.getID()])
 		{
 			if (!current_nodes[i].getVisited())
 			{
@@ -179,16 +180,19 @@ public:
 		}
 		post_order.push_back(n.getID());
 	}
-
-	void dumbDFSForest(std::unordered_map<int, std::set<int>> &found_edges)
+	//change unordered map
+	//EXPERIMENT:CHANGING UNORDERED MAP
+	void dumbDFSForest(std::unordered_map<unsigned int, std::set<unsigned int>> &found_edges)
 	{
 		forest.clear();
-		for (std::pair<int, std::set<int>> p : found_edges)
+		for (std::pair<unsigned int, std::set<unsigned int>> p : found_edges)
 		{
+			//Set each node to false
 			current_nodes[p.first].setVisited(false);
 		}
-		for (std::pair<int, std::set<int>> p : found_edges)
+		for (std::pair<unsigned int, std::set<unsigned int>> p : found_edges)
 		{
+			//If for each found edge for a node that is not visited, perform recursion
 			if (!current_nodes[p.first].getVisited())
 			{
 				tree.push_back(current_nodes[p.first].getID());
@@ -197,12 +201,13 @@ public:
 				tree.clear();
 			}
 		}
+		//real_new_current_edges = new_current_edges;
 	}
-	 void dumbDepthFirstSearch(Node& n, std::unordered_map<int, std::set<int>>& found_edges)
+	 void dumbDepthFirstSearch(Node& n, std::unordered_map<unsigned int, std::set<unsigned int>>& found_edges)
 	 {
 		 n.setVisited(true);
 		 //I start iterating through the found edges starting at the current index so that I don't go out of order
-		 for (int i : found_edges[n.getID()])
+		 for (unsigned int i : found_edges[n.getID()])
 		 {
 			 if (!current_nodes[i].getVisited())
 			 {
@@ -214,9 +219,9 @@ public:
 
 	 void manipulate_current_edges()
 	 {
-		 std::unordered_map<int, std::set<int>> new_current_edges;
-		 std::pair<int, std::set<int>> new_pair;
-		 for (int i : post_order)
+		 std::unordered_map<unsigned int, std::set<unsigned int>> new_current_edges;
+		 std::pair<unsigned int, std::set<unsigned int>> new_pair;
+		 for (unsigned int i : post_order)
 		 {
 			 new_pair = std::make_pair(i, current_edges[i]);
 			 new_current_edges.insert(new_pair);
@@ -227,8 +232,8 @@ public:
 
 	 void organizeForest()
 	 {
-		 int keep_track = 0;
-		 for (std::vector<int> i : forest)
+		 unsigned int keep_track = 0;
+		 for (std::vector<unsigned int> i : forest)
 		 {
 			 std::sort(i.begin(), i.end());
 			 forest[keep_track] = i;
@@ -248,10 +253,10 @@ public:
 		
 		std::cout << std::endl << std::endl;
 
-		for (std::pair<int, std::set<int>> p : current_edges)
+		for (std::pair<unsigned int, std::set<unsigned int>> p : current_edges)
 		{
 			std::cout << p.first << "  ";
-			for (int i : p.second)
+			for (unsigned int i : p.second)
 			{
 				std::cout << i << " ";
 			}
@@ -259,10 +264,10 @@ public:
 		}
 		std::cout << std::endl << std::endl;
 
-		for (std::pair<int, std::set<int>> p : reverse_edges)
+		for (std::pair<unsigned int, std::set<unsigned int>> p : reverse_edges)
 		{
 			std::cout << p.first << "  ";
-			for (int i : p.second)
+			for (unsigned int i : p.second)
 			{
 				std::cout << i << " ";
 			}
@@ -271,9 +276,9 @@ public:
 
 		std::cout << std::endl << std::endl;
 
-		for (std::vector<int> tree : forest)
+		for (std::vector<unsigned int> tree : forest)
 		{
-			for (int value : tree)
+			for (unsigned int value : tree)
 			{
 				std::cout << value << std::endl;
 			}
@@ -282,7 +287,7 @@ public:
 
 		std::cout << std::endl << std::endl;
 		
-		for(int i : post_order)
+		for(unsigned int i : post_order)
 		std::cout << i << std::endl;
 		
 	}

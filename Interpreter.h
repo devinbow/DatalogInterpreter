@@ -86,7 +86,7 @@ public:
 	//	current_graph.assign_rule_numbers(this->current_program.rule_list);
 		current_graph.createGraph(this->current_program.rule_list);
 
-		std::vector<std::vector<int>> SCC = current_graph.getSCC();
+		std::vector<std::vector<unsigned int>> SCC = current_graph.getSCC();
 
 		
 		std::vector<Relation*> added_relations;
@@ -107,7 +107,7 @@ public:
 
 		bool run_single_check = false;
 		std::cout << std::endl << "Rule Evaluation" << std::endl;
-		for (std::vector<int> j : SCC)
+		for (std::vector<unsigned int> j : SCC)
 		{
 			long unsigned int counter = 0;
 			std::cout << "SCC: ";
