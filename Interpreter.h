@@ -86,7 +86,7 @@ public:
 	//	current_graph.assign_rule_numbers(this->current_program.rule_list);
 		current_graph.createGraph(this->current_program.rule_list);
 
-		std::vector<std::vector<int>> forest = current_graph.getSCC();
+		std::vector<std::vector<int>> SCC = current_graph.getSCC();
 
 		
 		std::vector<Relation*> added_relations;
@@ -107,7 +107,7 @@ public:
 
 		bool run_single_check = false;
 		std::cout << std::endl << "Rule Evaluation" << std::endl;
-		for (std::vector<int> j : forest)
+		for (std::vector<int> j : SCC)
 		{
 			long unsigned int counter = 0;
 			std::cout << "SCC: ";
@@ -121,7 +121,8 @@ public:
 				counter++;
 			}
 			std::cout << std::endl;
-
+			//While size of scc > 1 || adjacency list for rule contains itself
+			//
 			if (j.size() == 1)
 			{
 				run_single_check = true;
@@ -198,7 +199,7 @@ public:
 
 				if (run_single_check)
 				{
-					if(!singleCheck(current_rule))
+					if(!current_graph.check_for_adjacency(current_rule))
 					break;
 				}
 			}
@@ -273,15 +274,9 @@ public:
 			current_relation->toString();
 		}
 	}
-
-	bool singleCheck(Rule current_rule)
-	{
-		if (current_rule.getHeadPredicate().ID != current_rule.getBodyPrecdicates()[0].ID)
-		{
-			return false;
-		}
-		return true;
-	}
+	//Check if itself is in its adjacency list
+	//If they match, loop
+	//If not, don't loop
 };
 
 #endif 

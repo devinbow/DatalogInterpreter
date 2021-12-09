@@ -24,7 +24,7 @@ public:
 	}
 	void createGraph(std::vector<Rule>& rule_list)
 	{
-		//this->assign_rule_numbers(rule_list);
+		this->assign_rule_numbers(rule_list);
 		this->createNodes(rule_list);
 		this->create_and_print_Dependencies();
 		this->reverseDependencyGraph();
@@ -43,6 +43,21 @@ public:
 		{
 			rule_list[i].setGraphNumber(i);
 		}
+	}
+
+	bool check_for_adjacency(Rule current_rule)
+	{
+		int current_graph_number = current_rule.getGraphNumber();
+		std::set<int> current_connected_edges = current_edges[current_graph_number];
+		for (int i : current_connected_edges)
+		{
+			if (i == current_graph_number)
+			{
+				return true;
+			}
+		}
+		//if(std::find(current_edges.begin(), current_edges.end(), current_graph_number)
+		return false;
 	}
 
 	std::vector<std::vector<int>> getSCC()
