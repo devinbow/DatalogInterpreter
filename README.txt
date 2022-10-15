@@ -11,15 +11,3 @@ A lexer is a program that takes as input a program file and scans the file for t
 output to the lexer is a collection of tokens. These tokens can then be read by the parser.
 The parser determines the meaning of the program based on the order and type of tokens.
 This meaning is then given to the execution engine, which executes the program.
-
-Why Tokens?
-You might be questioning the reason we are converting programming files into tokens. Pro-
-gramming languages are created to allow each programmer to use variable names, method
-names, comments, strings, etc. that are specific to him or her or the application domain.
-These items are very important for readability and organization to the programmer, but they
-are not essential for the computer to execute the code. A lexer turns programmer-specific
-“items” into programmer-independent structures called “tokens.” Each token contains the
-information the computer needs, namely three items: 1) a token name, which is selected
-from a set of predefined names, e.g. “STRING”; 2) the specific “item” for that token, e.g.
-"Hello World"; and 3) a line number. This information allows the computer to get one step
-closer to execution.
